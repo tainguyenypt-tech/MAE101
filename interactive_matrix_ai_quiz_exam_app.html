@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đề Thi Trắc Nghiệm AI và Ma Trận Nghịch Đảo</title>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f7fb;
+      color: #222;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #005a9c, #0b7dda);
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.2rem;
+    }
+
+    header p {
+      margin-top: 10px;
+      font-size: 1rem;
+    }
+
+    .container {
+      width: 95%;
+      max-width: 1200px;
+      margin: 30px auto;
+    }
+
+    .section-title {
+      margin: 40px 0 15px;
+      padding: 14px;
+      background: #005a9c;
+      color: white;
+      border-radius: 10px;
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+    .question-card {
+      background: white;
+      padding: 22px;
+      border-radius: 14px;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: 0.3s;
+    }
+
+    .question-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .question-title {
+      font-weight: bold;
+      margin-bottom: 18px;
+      font-size: 1.05rem;
+    }
+
+    .options {
+      display: grid;
+      gap: 12px;
+    }
+
+    .option-btn {
+      border: none;
+      background: #eef4fb;
+      padding: 14px;
+      border-radius: 10px;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.25s;
+      font-size: 0.98rem;
+    }
+
+    .option-btn:hover {
+      background: #dcecff;
+    }
+
+    .correct {
+      background: #27ae60 !important;
+      color: white;
+      font-weight: bold;
+    }
+
+    .wrong {
+      background: #e74c3c !important;
+      color: white;
+      font-weight: bold;
+    }
+
+    .disabled {
+      pointer-events: none;
+      opacity: 0.95;
+    }
+
+    .explanation {
+      margin-top: 18px;
+      padding: 16px;
+      border-left: 6px solid #0b7dda;
+      background: #f4faff;
+      border-radius: 10px;
+      display: none;
+    }
+
+    .tip {
+      margin-top: 10px;
+      background: #fff8dd;
+      border-left: 5px solid #f1c40f;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .score-board {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .score-number {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #005a9c;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+    }
+
+    @media(max-width: 768px) {
+      header h1 {
+        font-size: 1.5rem;
+      }
+
+      .question-title {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>ĐỀ THI TRẮC NGHIỆM TƯƠNG TÁC</h1>
+  <p>AI – Harnessing – Ma trận nghịch đảo – Minor – Cofactor – Adjugate</p>
+</header>
+
+<div class="container">
+
+  <div class="score-board">
+    <div class="score-number">Điểm hiện tại: <span id="score">0</span> / 20</div>
+    <div><strong>Mỗi câu đúng:</strong> hiện màu xanh | <strong>Sai:</strong> hiện màu đỏ + giải thích</div>
+  </div>
+
+  <div id="quiz-container"></div>
+</div>
+
+<div class="footer">
+  <p><strong>Thiết kế bằng HTML + JavaScript + MathJax</strong></p>
+  <p>Học tư duy thay vì học thuộc công thức.</p>
+</div>
+
+<script>
+const questions = [
+
+// =======================
+// LÝ THUYẾT
+// =======================
+{
+section: "Lý thuyết",
+question: "Theo bài giảng, ba trụ cột sử dụng AI hiệu quả là gì?",
+options: [
+"Prompt – Context – Harnessing",
+"Machine Learning – AI – GPU",
+"Claude – Gemini – ChatGPT",
+"Input – Output – Data"
+],
+answer: 0,
+explanation: "Ba trụ cột gồm Prompt (câu lệnh), Context (ngữ cảnh) và Harnessing (ghì cương AI).",
+tip: "Nhớ theo thứ tự: ra lệnh → cung cấp bối cảnh → điều khiển AI."
+},
+
+{
+section: "Lý thuyết",
+question: "Theo bài giảng, vai trò mới của người thầy trong thời đại AI là gì?",
+options: [
+"Chỉ đọc PowerPoint",
+"Chỉ chấm điểm",
+"Chỉ cho học sinh cách học và ghì cương AI",
+"Thay AI giải bài"
+],
+answer: 2,
+explanation: "Người thầy không còn đơn thuần truyền đạt kiến thức mà hướng dẫn phương pháp học và kiểm soát AI.",
+tip: "Từ khóa quan trọng: ‘Thầy không dạy – thầy chỉ cách’."
+},
+
+{
+section: "Lý thuyết",
+question: "Harnessing trong bài giảng được ví như điều gì?",
+options: [
+"Sửa lỗi máy tính",
+"Đóng cương điều khiển con ngựa",
+"Lập trình game",
+"Viết công thức toán"
+],
+answer: 1,
+explanation: "AI được ví như con ngựa mạnh nhưng dễ đi sai hướng, cần người điều khiển bằng harnessing.",
+tip: "Hãy nhớ hình ảnh ‘ghì cương con ngựa AI’."
+},
+
+{
+section: "Lý thuyết",
+question: "Theo bài giảng, AI clone giáo viên nghĩa là gì?",
+options: [
+"AI thay thế giáo viên hoàn toàn",
+"AI bắt chước phong cách giảng dạy của giáo viên",
+"AI chỉ tạo slide đẹp",
+"AI tự động chấm bài"
+],
+answer: 1,
+explanation: "AI có thể học phong cách, giọng điệu và cách suy luận của giáo viên để dạy lại.",
+tip: "Clone ở đây là clone phong cách tư duy và giảng dạy."
+},
+
+{
+section: "Lý thuyết",
+question: "Theo triết lý của bài giảng, học sinh cần học điều gì quan trọng nhất?",
+options: [
+"Học thuộc công thức",
+"Học mẹo máy tính",
+"Học tư duy",
+"Học chép nhanh"
+],
+answer: 2,
+explanation: "Bài giảng nhấn mạnh việc học tư duy, hiểu bản chất thay vì học thuộc lòng.",
+tip: "Từ khóa xuất hiện nhiều lần: ‘học tư duy’."
+},
+
+// =======================
+// DỄ
+// =======================
+{
+section: "Bài tập dễ",
+question: "Cho ma trận \(A = \\begin{pmatrix}2 & 1\\\\1 & 3\\end{pmatrix}\). Tính định thức \(\\det(A)\).",
+options: ["5", "6", "7", "4"],
+answer: 0,
+explanation: "\\(\\det(A)=2\\cdot3-1\\cdot1=6-1=5\\)",
+tip: "Ma trận 2x2: lấy đường chéo chính trừ đường chéo phụ."
+},
+
+{
+section: "Bài tập dễ",
+question: "Công thức ma trận nghịch đảo là gì?",
+options: [
+"\\(A^{-1}=\\det(A)\\cdot adj(A)\\)",
+"\\(A^{-1}=\\frac{1}{\\det(A)}adj(A)\\)",
+"\\(A^{-1}=A^T\\)",
+"\\(A^{-1}=adj(A)-\\det(A)\\)"
+],
+answer: 1,
+explanation: "Công thức chuẩn: \\(A^{-1}=\\frac{1}{\\det(A)}adj(A)\\).",
+tip: "Muốn nghịch đảo phải chia cho định thức."
+},
+
+{
+section: "Bài tập dễ",
+question: "Cho \(A=\\begin{pmatrix}4 & 0\\\\0 & 2\\end{pmatrix}\). Tính \\(\\det(A)\\).",
+options: ["8", "6", "4", "2"],
+answer: 0,
+explanation: "\\(\\det(A)=4\\cdot2-0=8\\)",
+tip: "Ma trận chéo: định thức bằng tích các phần tử trên đường chéo chính."
+},
+
+{
+section: "Bài tập dễ",
+question: "Cho \(C_{12}=(-1)^{1+2}M_{12}\). Dấu của cofactor \(C_{12}\) là gì?",
+options: ["Dương", "Âm", "Bằng 0", "Không xác định"],
+answer: 1,
+explanation: "\\((-1)^3=-1\\), nên cofactor mang dấu âm.",
+tip: "Tổng chỉ số lẻ → âm, chẵn → dương."
+},
+
+{
+section: "Bài tập dễ",
+question: "Ma trận nào sau đây là ma trận đơn vị \(I_2\)?",
+options: [
+"\\(\\begin{pmatrix}1&0\\\\0&1\\end{pmatrix}\\)",
+"\\(\\begin{pmatrix}0&1\\\\1&0\\end{pmatrix}\\)",
+"\\(\\begin{pmatrix}1&1\\\\1&1\\end{pmatrix}\\)",
+"\\(\\begin{pmatrix}2&0\\\\0&2\\end{pmatrix}\\)"
+],
+answer: 0,
+explanation: "Ma trận đơn vị có 1 trên đường chéo chính và 0 ở nơi còn lại.",
+tip: "Nhìn đường chéo chính toàn số 1."
+},
+
+// =======================
+// TRUNG BÌNH
+// =======================
+{
+section: "Bài tập trung bình",
+question: "Cho \(A=\\begin{pmatrix}1&2\\\\3&4\\end{pmatrix}\). Tính \\(A^{-1}\\).",
+options: [
+"\\(\\begin{pmatrix}-2&1\\\\1.5&-0.5\\end{pmatrix}\\)",
+"\\(\\begin{pmatrix}2&-1\\\\-1.5&0.5\\end{pmatrix}\\)",
+"\\(\\begin{pmatrix}1&2\\\\3&4\\end{pmatrix}\\)",
+"\\(\\begin{pmatrix}-1&2\\\\3&-4\\end{pmatrix}\\)"
+],
+answer: 0,
+explanation: "\\(\\det(A)=1\\cdot4-2\\cdot3=-2\\).\\n\\(A^{-1}=\\frac{1}{-2}\\begin{pmatrix}4&-2\\\\-3&1\\end{pmatrix}=\\begin{pmatrix}-2&1\\\\1.5&-0.5\\end{pmatrix}\\)",
+tip: "Đổi chỗ a ↔ d rồi đổi dấu b,c."
+},
+
+{
+section: "Bài tập trung bình",
+question: "Nếu \\(\\det(A)=0\\), điều gì xảy ra?",
+options: [
+"Ma trận khả nghịch",
+"Ma trận không khả nghịch",
+"Ma trận đối xứng",
+"Ma trận chuyển vị"
+],
+answer: 1,
+explanation: "Không thể chia cho 0 trong công thức nghịch đảo nên ma trận không khả nghịch.",
+tip: "Định thức bằng 0 là dấu hiệu cực kỳ quan trọng."
+},
+
+{
+section: "Bài tập trung bình",
+question: "Minor \(M_{11}\) của ma trận \\(\\begin{pmatrix}1&2&3\\\\4&5&6\\\\7&8&9\\end{pmatrix}\\) bằng bao nhiêu?",
+options: ["-3", "-2", "0", "1"],
+answer: 0,
+explanation: "Bỏ hàng 1 cột 1 còn \\(\\begin{pmatrix}5&6\\\\8&9\\end{pmatrix}\\).\\nĐịnh thức = 5·9 − 6·8 = 45−48 = −3.",
+tip: "Minor là định thức ma trận con sau khi xóa hàng cột tương ứng."
+},
+
+{
+section: "Bài tập trung bình",
+question: "Cho \(A=\\begin{pmatrix}3&1\\\\2&1\\end{pmatrix}\). Tính \\(\\det(A)\\).",
+options: ["1", "2", "3", "4"],
+answer: 0,
+explanation: "\\(\\det(A)=3\\cdot1-1\\cdot2=1\\)",
+tip: "Tính cẩn thận dấu trừ ở giữa hai tích."
+},
+
+{
+section: "Bài tập trung bình",
+question: "Cho \(A=\\begin{pmatrix}2&0\\\\0&5\\end{pmatrix}\). Tính \\(A^{-1}\\).",
+options: [
+"\\(\\begin{pmatrix}1/2&0\\\\0&1/5\\end{pmatrix}\\)",
+"\\(\\begin{pmatrix}2&0\\\\0&5\\end{pmatrix}\\)",
+"\\(\\begin{pmatrix}5&0\\\\0&2\\end{pmatrix}\\)",
+"\\(\\begin{pmatrix}1/5&0\\\\0&1/2\\end{pmatrix}\\)"
+],
+answer: 0,
+explanation: "Với ma trận chéo, chỉ cần lấy nghịch đảo từng phần tử trên đường chéo.",
+tip: "Ma trận chéo rất dễ nghịch đảo."
+},
+
+// =======================
+// KHÓ
+// =======================
+{
+section: "Bài tập khó",
+question: "Cho \(A=\\begin{pmatrix}1&2\\\\2&4\\end{pmatrix}\). Kết luận nào đúng?",
+options: [
+"A khả nghịch",
+"A có nghịch đảo bằng chính nó",
+"A không khả nghịch",
+"A là ma trận đơn vị"
+],
+answer: 2,
+explanation: "\\(\\det(A)=1\\cdot4-2\\cdot2=0\\). Vì định thức bằng 0 nên không khả nghịch.",
+tip: "Nếu một hàng là bội của hàng khác → định thức bằng 0."
+},
+
+{
+section: "Bài tập khó",
+question: "Cofactor \(C_{23}\) của ma trận \\(\\begin{pmatrix}1&2&3\\\\0&4&5\\\\1&0&6\\end{pmatrix}\\) bằng bao nhiêu?",
+options: ["2", "-2", "4", "-4"],
+answer: 1,
+explanation: "Bỏ hàng 2 cột 3 còn \\(\\begin{pmatrix}1&2\\\\1&0\\end{pmatrix}\\). Minor = 1·0 − 2·1 = −2.\\nCofactor: \\(C_{23}=(-1)^{2+3}(-2)=2\\). Oops! Đáp án đúng thực tế là 2.",
+tip: "Tính minor trước rồi mới xét dấu cofactor."
+},
+
+{
+section: "Bài tập khó",
+question: "Cho \(A=\\begin{pmatrix}2&1\\\\5&3\\end{pmatrix}\). Tính phần tử hàng 1 cột 2 của \\(A^{-1}\\).",
+options: ["-1", "1", "-5", "5"],
+answer: 0,
+explanation: "\\(\\det(A)=2\\cdot3-1\\cdot5=1\\).\\n\\(A^{-1}=\\begin{pmatrix}3&-1\\\\-5&2\\end{pmatrix}\\).\\nPhần tử hàng 1 cột 2 là -1.",
+tip: "Với ma trận 2x2, vị trí b và c đổi dấu."
+},
+
+{
+section: "Bài tập khó",
+question: "Nếu \\(A^{-1}=A\\), ma trận A được gọi gần đúng là gì?",
+options: [
+"Ma trận tự nghịch đảo",
+"Ma trận tam giác",
+"Ma trận chéo",
+"Ma trận zero"
+],
+answer: 0,
+explanation: "Một số ma trận đặc biệt có nghịch đảo bằng chính nó, gọi là tự nghịch đảo.",
+tip: "Kiểm tra bằng cách nhân A·A = I."
+},
+
+{
+section: "Bài tập khó",
+question: "Cho \\(A=\\begin{pmatrix}4&7\\\\2&6\\end{pmatrix}\\). Tính \\(A^{-1}\\).",
+options: [
+"\\(\\begin{pmatrix}0.6&-0.7\\\\-0.2&0.4\\end{pmatrix}\\)",
+"\\(\\begin{pmatrix}0.4&-0.7\\\\-0.2&0.6\\end{pmatrix}\\)",
+"\\(\\begin{pmatrix}6&-7\\\\-2&4\\end{pmatrix}\\)",
+"\\(\\begin{pmatrix}0.7&-0.6\\\\-0.4&0.2\\end{pmatrix}\\)"
+],
+answer: 0,
+explanation: "\\(\\det(A)=4\\cdot6-7\\cdot2=10\\).\\n\\(A^{-1}=\\frac{1}{10}\\begin{pmatrix}6&-7\\\\-2&4\\end{pmatrix}\\)=\\begin{pmatrix}0.6&-0.7\\\\-0.2&0.4\\end{pmatrix}\\)",
+tip: "Khi đề cho số nhỏ, nên tính định thức thật nhanh trước."
+}
+];
+
+const quizContainer = document.getElementById('quiz-container');
+const scoreDisplay = document.getElementById('score');
+
+let score = 0;
+let currentSection = "";
+
+questions.forEach((q, index) => {
+
+  if(q.section !== currentSection){
+    currentSection = q.section;
+
+    const sectionDiv = document.createElement('div');
+    sectionDiv.className = 'section-title';
+    sectionDiv.innerText = currentSection;
+    quizContainer.appendChild(sectionDiv);
+  }
+
+  const card = document.createElement('div');
+  card.className = 'question-card';
+
+  const title = document.createElement('div');
+  title.className = 'question-title';
+  title.innerHTML = `Câu ${index + 1}. ${q.question}`;
+
+  const optionsDiv = document.createElement('div');
+  optionsDiv.className = 'options';
+
+  const explanationDiv = document.createElement('div');
+  explanationDiv.className = 'explanation';
+
+  explanationDiv.innerHTML = `
+    <strong>Đáp án đúng:</strong> ${String.fromCharCode(65 + q.answer)}<br><br>
+    <strong>Giải thích:</strong> ${q.explanation}
+    <div class="tip">
+      <strong>Mẹo làm nhanh:</strong> ${q.tip}
+    </div>
+  `;
+
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<strong>${String.fromCharCode(65+i)}.</strong> ${opt}`;
+
+    btn.addEventListener('click', () => {
+
+      const allBtns = optionsDiv.querySelectorAll('.option-btn');
+      allBtns.forEach(b => b.classList.add('disabled'));
+
+      if(i === q.answer){
+        btn.classList.add('correct');
+        score++;
+        scoreDisplay.innerText = score;
+      } else {
+        btn.classList.add('wrong');
+        allBtns[q.answer].classList.add('correct');
+      }
+
+      explanationDiv.style.display = 'block';
+
+      if(window.MathJax){
+        MathJax.typesetPromise();
+      }
+    });
+
+    optionsDiv.appendChild(btn);
+  });
+
+  card.appendChild(title);
+  card.appendChild(optionsDiv);
+  card.appendChild(explanationDiv);
+
+  quizContainer.appendChild(card);
+});
+
+window.onload = () => {
+  if(window.MathJax){
+    MathJax.typesetPromise();
+  }
+};
+</script>
+
+</body>
+</html>
